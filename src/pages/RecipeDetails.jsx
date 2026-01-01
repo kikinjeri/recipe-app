@@ -1,30 +1,27 @@
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
 import {
+  Box,
   Typography,
-  Button,
   Card,
   CardContent,
   CircularProgress,
-  Box,
 } from "@mui/material";
+import Layout from "../components/Layout/Layout";
 
 function RecipeDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
-
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch recipe by ID
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/recipes/${id}`);
+        const res = await fetch(`http://localhost:5000/api/recipes/${id}`);
         const data = await res.json();
         setRecipe(data);
-      } catch (error) {
-        console.error("Failed to load recipe:", error);
+      } catch (err) {
+        console.error("Failed to load recipe:", err);
       } finally {
         setLoading(false);
       }
@@ -33,107 +30,56 @@ function RecipeDetails() {
     fetchRecipe();
   }, [id]);
 
-  // Delete recipe
-  const handleDelete = async () => {
-    try {
-      await fetch(`http://localhost:5000/recipes/${id}`, {
-        method: "DELETE",
-      });
-
-      navigate("/saved"); // redirect after delete
-    } catch (error) {
-      console.error("Delete failed:", error);
-    }
-  };
-
   if (loading) {
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-        <CircularProgress />
-      </Box>
+      <Layout>
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress size={48} />
+        </Box>
+      </Layout>
     );
   }
 
   if (!recipe) {
-    return <Typography>Recipe not found.</Typography>;
+    return (
+      <Layout>
+        <Typography variant="h5" sx={{ mt: 4, textAlign: "center" }}>
+          Recipe not found
+        </Typography>
+      </Layout>
+    );
   }
 
-  const imageSrc =
-    recipe.image || "https://via.placeholder.com/500x350?text=No+Image";
-
   return (
-    <Box sx={{ maxWidth: 700, margin: "0 auto", marginTop: 4 }}>
-      <Card sx={{ borderRadius: 2 }}>
-        {/* Image */}
-        <img
-          src={imageSrc}
-          alt={recipe.title}
-          style={{
-            width: "100%",
-            height: "300px",
-            objectFit: "cover",
-            borderTopLeftRadius: "8px",
-            borderTopRightRadius: "8px",
-          }}
-        />
-
+    <Layout>
+      <Card
+        sx={{ p: 3, borderRadius: 3, boxShadow: "0 3px 10px rgba(0,0,0,0.08)" }}
+      >
         <CardContent>
-          {/* Title */}
-          <Typography variant="h4" sx={{ fontWeight: 700, marginBottom: 2 }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, mb: 2 }}>
             {recipe.title}
           </Typography>
 
-          {/* Ingredients */}
-          <Typography variant="h6" sx={{ marginTop: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 600, mt: 3 }}>
             Ingredients
           </Typography>
-          <ul>
-            {recipe.ingredients.map((ing, index) => (
-              <li key={index}>
-                <Typography>{ing}</Typography>
-              </li>
-            ))}
-          </ul>
+          {recipe.ingredients.map((ing, i) => (
+            <Typography key={i} sx={{ ml: 1 }}>
+              • {ing}
+            </Typography>
+          ))}
 
-          {/* Steps */}
-          <Typography variant="h6" sx={{ marginTop: 3 }}>
-            Steps
+          <Typography variant="h6" sx={{ fontWeight: 600, mt: 3 }}>
+            Instructions
           </Typography>
-          <ol>
-            {recipe.steps.map((step, index) => (
-              <li key={index}>
-                <Typography>{step}</Typography>
-              </li>
-            ))}
-          </ol>
-
-          {/* Buttons */}
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              marginTop: 4,
-            }}
-          >
-            <Button
-              variant="contained"
-              component={Link}
-              to={`/recipe/${id}/edit`}
-            >
-              Edit
-            </Button>
-
-            <Button variant="outlined" color="error" onClick={handleDelete}>
-              Delete
-            </Button>
-
-            <Button variant="text" onClick={() => navigate(-1)}>
-              Back
-            </Button>
-          </Box>
+          {recipe.steps.map((step, i) => (
+            <Typography key={i} sx={{ ml: 1, mb: 1 }}>
+              {i + 1}. {step}
+            </Typography>
+          ))}
         </CardContent>
       </Card>
-    </Box>
+    </Layout>
   );
 }
 

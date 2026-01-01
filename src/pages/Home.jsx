@@ -1,16 +1,52 @@
 import Layout from "../components/Layout/Layout";
 import RecipeForm from "../components/RecipeForm/RecipeForm";
 import FreeRecipeSearch from "../components/FreeRecipeSearch/FreeRecipeSearch";
+import { Box, Typography } from "@mui/material";
 
 function Home() {
   return (
     <Layout>
-      <h1>My Recipes</h1>
+      {/* Section 1 */}
+      <Box
+        sx={{
+          minHeight: "100vh",
+          scrollSnapAlign: "start",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          px: 2,
+        }}
+      >
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 700, mb: 3, textAlign: "center" }}
+        >
+          My Recipes
+        </Typography>
 
-      <RecipeForm />
+        <RecipeForm />
+      </Box>
 
-      <h2>Search Free Recipes</h2>
-      <FreeRecipeSearch />
+      {/* Section 2 */}
+      <Box
+        sx={{
+          minHeight: "100vh",
+          scrollSnapAlign: "start",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          px: 2,
+        }}
+      >
+        <Typography
+          variant="h5"
+          sx={{ fontWeight: 600, mb: 3, textAlign: "center" }}
+        >
+          Search Free Recipes
+        </Typography>
+
+        <FreeRecipeSearch />
+      </Box>
     </Layout>
   );
 }

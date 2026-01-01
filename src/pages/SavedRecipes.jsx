@@ -1,17 +1,17 @@
-import { useEffect, useState } from "react";
+import Layout from "../components/Layout/Layout";
 import { Typography, Box, CircularProgress } from "@mui/material";
 import RecipeList from "../components/RecipeList/RecipeList";
+import { useEffect, useState } from "react";
+import { getRecipes } from "../api/recipes";
 
 function SavedRecipes() {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch saved recipes from backend
   useEffect(() => {
     const fetchRecipes = async () => {
       try {
-        const res = await fetch("http://localhost:5000/recipes");
-        const data = await res.json();
+        const data = await getRecipes();
         setRecipes(data);
       } catch (error) {
         console.error("Failed to load saved recipes:", error);
@@ -19,26 +19,27 @@ function SavedRecipes() {
         setLoading(false);
       }
     };
-
     fetchRecipes();
   }, []);
 
-  if (loading) {
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", marginTop: 4 }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
   return (
-    <Box sx={{ maxWidth: 900, margin: "0 auto", marginTop: 4 }}>
-      <Typography variant="h4" sx={{ fontWeight: 700, marginBottom: 3 }}>
-        Your Saved Recipes
-      </Typography>
-
-      <RecipeList recipes={recipes} />
-    </Box>
+    <Layout>
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+          <CircularProgress size={48} />
+        </Box>
+      ) : (
+        <Box sx={{ mt: 2 }}>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 700, mb: 3, textAlign: "center" }}
+          >
+            Your Saved Recipes
+          </Typography>
+          <RecipeList recipes={recipes} />
+        </Box>
+      )}
+    </Layout>
   );
 }
 
